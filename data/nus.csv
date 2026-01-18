@@ -1,17 +1,1 @@
 nus_code,nus_mod,nus_desc
-CS1010,Programming Methodology,"Fundamental concepts of problem solving by computing. Includes variables, control structures, functions, and arrays."
-CS2030S,Programming Methodology II,"Object-oriented programming and functional programming paradigms using Java. Covers inheritance, polymorphism, and generics."
-CS2040S,Data Structures and Algorithms,"Focuses on data structure design and complexity analysis. Covers heaps, balanced search trees, and graph algorithms."
-CS2100,Computer Organisation,"Understanding computer systems from logic gates to instruction sets. Covers MIPS architecture, pipelining, and cache memory."
-CS2102,Database Systems,"Relational database design and implementation. Focuses on SQL, relational algebra, and normalization theory."
-CS2103T,Software Engineering,"Principles of large-scale software development. Covers design patterns, unit testing, and version control using Git."
-CS2105,Introduction to Computer Networks,"Fundamental concepts in networking. Includes protocol layers, TCP/UDP, socket programming, and network security."
-CS2106,Introduction to Operating Systems,"Concepts of OS design including process management, CPU scheduling, memory management, and file systems."
-CS3230,Design and Analysis of Algorithms,"Advanced algorithm design techniques including dynamic programming, greedy algorithms, and NP-completeness."
-CS3241,Computer Graphics,"Fundamentals of 3D rendering, including transformations, lighting models, texture mapping, and ray tracing."
-CS3243,Introduction to Artificial Intelligence,"Core AI concepts including heuristic search, constraint satisfaction, logic-based agents, and probability."
-CS3244,Machine Learning,"Introduction to supervised and unsupervised learning, neural networks, decision trees, and model evaluation."
-MA1521,Calculus for Computing,"Calculus concepts for computer science, including limits, derivatives, integration, and series expansions."
-MA1522,Linear Algebra for Computing,"Systems of linear equations, vector spaces, eigenvalues, and eigenvectors with applications in computing."
-ST2334,Probability and Statistics,"Probability theory and statistical inference for engineers. Covers random variables, distributions, and hypothesis testing."
-IS2101,Business and Technical Communication,Focuses on oral and written communication skills specifically for computing and technical environments.

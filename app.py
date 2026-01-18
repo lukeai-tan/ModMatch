@@ -221,7 +221,7 @@ with st.sidebar:
         st.info("Plan is empty; nothing to export.")
     
     st.header("Data Stuff")
-    if st.button("Clear All Data", help="This will delete data from all tables.", use_container_width=True):
+    if st.button("Clear All Data", help="This will DELETE data from all tables.", use_container_width=True):
         storage.clear_all()
         st.success("Data cleared!")
         st.rerun()
