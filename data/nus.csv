@@ -1,16 +1,4 @@
 nus_code,nus_mod,nus_desc
-ACC1701X,Accounting for Decision Makers,"Introduction to financial accounting. Covers accounting equations, financial statements, and interpreting corporate annual reports."
-BSP1703,Managerial Economics,"Basic economic principles applied to business. Focuses on consumer behavior, market structures, and pricing strategies."
-CE2112,Civil Engineering Materials,"Study of common materials used in civil engineering. Covers properties of steel, concrete, timber, and sustainable building materials."
-EE2021,Devices and Circuits,"Fundamentals of electronics. Covers semiconductor physics, diodes, bipolar junction transistors, and operational amplifiers."
-GEA1000,Quantitative Reasoning with Data,"Foundational data literacy. Covers statistical sampling, visualization, probability, and making inferences from real-world data."
-GESS1025,Singapore: Imagining the Next Nation,"Historical and sociological study of Singapore’s development. Analyzes national identity, urban planning, and social policies."
-MA1511,Engineering Calculus,"Core calculus for engineering students. Includes differential equations, partial derivatives, and multiple integrals."
-MA1512,Differential Equations for Engineering,Theory and application of first and second-order differential equations and Laplace transforms.
-ME2112,Strength of Materials,"Mechanical engineering core. Analyzes stress, strain, torsion, and bending of beams in structural components."
-MLE1101,Materials Science for Engineers,"Structure of materials at the atomic level. Discusses mechanical, electrical, and thermal properties of metals and polymers."
-OT5102,Clinical Practice in Occupational Therapy,"Professional practice in healthcare. Covers therapeutic interventions, patient assessment, and ethical clinical reasoning."
-PH1102E,Introduction to Philosophy,"Foundational philosophical questions. Explores ethics, epistemology, and the nature of reality through classic texts."
 CS1010,Programming Methodology,"Fundamental concepts of problem solving by computing. Includes variables, control structures, functions, and arrays."
 CS2030S,Programming Methodology II,"Object-oriented programming and functional programming paradigms using Java. Covers inheritance, polymorphism, and generics."
 CS2040S,Data Structures and Algorithms,"Focuses on data structure design and complexity analysis. Covers heaps, balanced search trees, and graph algorithms."

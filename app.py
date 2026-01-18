@@ -196,7 +196,7 @@ with st.sidebar:
     uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
     target = st.selectbox("Add to:", ["NUS Modules", "Partner Modules"])
     
-    if st.button("Execute Import"):
+    if st.button("Import"):
         if uploaded_file:
             if target == "Partner Modules":
                 storage.import_external_pu(uploaded_file)
@@ -219,3 +219,9 @@ with st.sidebar:
         )
     else:
         st.info("Plan is empty; nothing to export.")
+    
+    st.header("Data Stuff")
+    if st.button("Clear All Data", help="This will delete data from all tables.", use_container_width=True):
+        storage.clear_all()
+        st.success("Data cleared!")
+        st.rerun()
