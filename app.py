@@ -38,6 +38,8 @@ st.write("Match NUS modules with Partner University courses using semantic simil
 st.header("Step 1: Select Modules for Comparison")
 col1, col2 = st.columns(2)
 
+is_preview_active = len(st.session_state.preview) > 0
+
 with col1:
     st.subheader("NUS Modules")
     home_sel = st.dataframe(
@@ -45,8 +47,15 @@ with col1:
         on_select="rerun", 
         selection_mode="single-row", 
         hide_index=True,
-        use_container_width=True
+        use_container_width=True,
+        key="nus_table"
     )
+    
+    if home_sel.selection.rows:
+        # Disable the button if a preview exists
+        if st.button("Delete Selected NUS", key="del_nus_btn", disabled=is_preview_active):
+            storage.remove_nus_entries(home_sel.selection.rows)
+            st.rerun()
 
 with col2:
     st.subheader("Partner University Modules")
@@ -55,41 +64,52 @@ with col2:
         on_select="rerun", 
         selection_mode="multi-row", 
         hide_index=True,
-        use_container_width=True
+        use_container_width=True,
+        key="pu_table"
     )
+    
+    if partner_sel.selection.rows:
+        if st.button("Delete Selected Partner", key="del_pu_btn", disabled=is_preview_active):
+            storage.remove_partner_entries(partner_sel.selection.rows)
+            st.rerun()
 
-# Logic to generate the preview list
-if st.button("Generate Comparison Preview", type="primary"):
-    h_rows = home_sel.selection.rows
-    p_rows = partner_sel.selection.rows
+btn_col1, btn_col2 = st.columns(2)
 
-    if h_rows:
-        selected_nus = storage.get_nus_entries().iloc[h_rows[0]]
-        
-        # SCENARIO A: Manual Description Check
-        if p_rows:
-            data_bundle = storage.get_course_pairs(h_rows[0], p_rows)
-            st.session_state.preview = engine.get_preview_pairings(
-                data_bundle['nus_course'].iloc[0], 
-                data_bundle['partner_courses']
-            )
-            st.success(f"Description similarity calculated for {len(p_rows)} courses.")
+with btn_col1:
+    # Logic to generate the preview list
+    if st.button("Generate Comparison Preview", type="primary", use_container_width=True):
+        h_rows = home_sel.selection.rows
+        p_rows = partner_sel.selection.rows
+
+        if h_rows:
+            selected_nus = storage.get_nus_entries().iloc[h_rows[0]]
             
-        # SCENARIO B: Smart Name Match
-        else:
-            with st.spinner("Scanning all university course names..."):
-                all_partners = storage.get_partner_entries()
-                st.session_state.preview = engine.get_smart_name_matches(
-                    selected_nus, 
-                    all_partners
+            # SCENARIO A: Manual Description Check
+            if p_rows:
+                data_bundle = storage.get_course_pairs(h_rows[0], p_rows)
+                st.session_state.preview = engine.get_preview_pairings(
+                    data_bundle['nus_course'].iloc[0], 
+                    data_bundle['partner_courses']
                 )
-            
-            if st.session_state.preview:
-                st.success(f"Found {len(st.session_state.preview)} modules with similar names!")
+                st.success(f"Description similarity calculated!")
+                
+            # SCENARIO B: Smart Name Match
             else:
-                st.warning("No modules with similar names found in the database.")
-    else:
-        st.warning("Please select 1 NUS module on the left.")
+                with st.spinner("Scanning all university course names..."):
+                    all_partners = storage.get_partner_entries()
+                    st.session_state.preview = engine.get_smart_name_matches(
+                        selected_nus, 
+                        all_partners
+                    )
+                st.success(f"AI found {len(st.session_state.preview)} matches!")
+            st.rerun()
+        else:
+            st.warning("Please select 1 NUS module on the left.")
+
+with btn_col2:
+    if st.button("Clear Preview", use_container_width=True, disabled=not is_preview_active):
+        st.session_state.preview = []
+        st.rerun()
 
 st.divider()
 
@@ -97,6 +117,7 @@ st.divider()
 if st.session_state.preview:
     st.header("Step 2: Review & Finalize Mappings")
     st.write("Select the pairings you want to save to your final plan.")
+
     
     preview_df = pd.DataFrame([{
         "NUS Code": m.home_row['nus_code'],
@@ -117,23 +138,37 @@ if st.session_state.preview:
         selected_preview_indices = review_sel.selection.rows
         
         if selected_preview_indices:
-            final_payload = engine.finalize_selections(
-                st.session_state.preview, 
-                selected_preview_indices
-            )
+            # gets the current valid indices from the DB
+            valid_nus_indices = storage.get_nus_entries().index
+            valid_pu_indices = storage.get_partner_entries().index
             
-            storage.add_pairing(
-                nus_index=final_payload["nus_index"],
-                partner_index=final_payload["partner_indices"],
-                score=final_payload["scores"]
-            )
-            
-            # refresh preview
-            st.session_state.preview = []
-            st.success("Successfully added to your Final Plan!")
-            st.rerun()
-        else:
-            st.info("Please select the rows you want to keep from the table above.")
+            # check if the modules in the preview still exist
+            try:
+                for idx in selected_preview_indices:
+                    m = st.session_state.preview[idx]
+                    if m.home_row.name not in valid_nus_indices or m.partner_row.name not in valid_pu_indices:
+                        raise KeyError("One of the modules was deleted from the database.")
+
+                # 3. If all exist, finalize and save
+                final_payload = engine.finalize_selections(
+                    st.session_state.preview, 
+                    selected_preview_indices
+                )
+                
+                storage.add_pairing(
+                    nus_index=final_payload["nus_index"],
+                    partner_index=final_payload["partner_indices"],
+                    score=final_payload["scores"]
+                )
+                
+                st.session_state.preview = []
+                st.success("Successfully added to your Exchange Plan!")
+                st.rerun()
+                
+            except KeyError:
+                st.error("Error: You are trying to add modules that have been deleted. Clearing preview...")
+                st.session_state.preview = [] # Wipe the stale preview
+                st.rerun()
 
 # --- SHOW FINAL PLANNER ---
 st.divider()
@@ -223,5 +258,6 @@ with st.sidebar:
     st.header("Data Stuff")
     if st.button("Clear All Data", help="This will DELETE data from all tables.", use_container_width=True):
         storage.clear_all()
+        st.session_state.preview = []
         st.success("Data cleared!")
         st.rerun()

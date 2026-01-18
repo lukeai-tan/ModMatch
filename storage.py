@@ -506,30 +506,29 @@ class CourseStorage:
         
         return self.partner_df[~partner_keys.isin(paired_keys)].copy()
     
-    def get_course_details_for_pairing(self, pairing_index: int) -> Dict[str, Any]:
-        """
-        Get full course details for both courses in a pairing.
-        
-        Args:
-            pairing_index: Index of pairing in pairings_df
-            
-        Returns:
-            Dictionary with 'nus_module', 'partner_course', and 'score'
-        """
+    def get_course_details_for_pairing(self, pairing_index: int):
+        # Get the row from the mapping dataframe
         pairing = self.pairings_df.loc[pairing_index]
         
-        nus_module = self.nus_df[
-            self.nus_df['nus_code'] == pairing['nus_code']
-        ].iloc[0].copy()
+        # Filter for the NUS module
+        nus_match = self.nus_df[self.nus_df['nus_code'] == pairing['nus_code']]
         
-        partner_course = self.partner_df[
-            (self.partner_df['pu'] == pairing['pu']) &
+        # Filter for the Partner module
+        pu_match = self.partner_df[
+            (self.partner_df['pu'] == pairing['pu']) & 
             (self.partner_df['pu_code'] == pairing['pu_code'])
-        ].iloc[0].copy()
-        
+        ]
+
+        if nus_match.empty or pu_match.empty:
+            return {
+                'nus_module': {'nus_mod': 'N/A (Deleted)', 'nus_desc': 'The source data for this module was removed.'},
+                'partner_course': {'pu_mod': 'N/A (Deleted)', 'pu_desc': 'The source data for this course was removed.'},
+                'score': pairing['score']
+            }
+
         return {
-            'nus_module': nus_module,
-            'partner_course': partner_course,
+            'nus_module': nus_match.iloc[0].copy(),
+            'partner_course': pu_match.iloc[0].copy(),
             'score': pairing['score']
         }
     
